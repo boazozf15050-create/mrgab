@@ -1,0 +1,2206 @@
+-- Deobfuscated by مرقاب
+
+pcall(function()
+    if setfpscap then
+        setfpscap(9999)
+    end
+end)
+task.spawn(function()
+    while task.wait(0.5) do
+        pcall(function()
+            if setfpscap then
+                setfpscap(9999)
+            end
+        end)
+    end
+end)
+local contextActionService, players, localPlayer, playerGui, tweenService, userInputService, runService, topSquareButton, topSquareLabel, isDraggingTopSquare, menuSize, whiteColor, menuGui, menuFrame, targetPageScroll, protectPageScroll, protectionsPageScroll, voidPageScroll, protectedNames, targetPage, targetSearchBox, targetNameLabel, targetIdLabel, targetAvatar, bangButton, faceBANGButton, bangActive, bangLoopEnabled, scriptAlive, targetNameText, faceBangActive, protectPage, hangProtectPage, hangProtectButton, voidPage, cuffPageScroll, sendSilentCommand
+do
+    contextActionService = (game:GetService("ContextActionService"))
+    players = (game:GetService("Players"))
+    localPlayer = players.LocalPlayer
+    playerGui = localPlayer:WaitForChild("PlayerGui")
+    tweenService = (game:GetService("TweenService"))
+    userInputService = (game:GetService("UserInputService"))
+    game:GetService("ReplicatedStorage")
+end
+
+local whitelist = {
+    koko = false,
+    koko = false,
+    koko = false,
+    koko = false,
+    koko = false,
+    koko = false,
+    koko = false,
+}
+
+local function kickLocalPlayer(kickMessage)
+    pcall(function()
+        localPlayer:Kick(kickMessage or "You have been kicked from the server by an Administrator.")
+    end)
+end
+local function isWhitelistedName(playerName)
+    if not playerName then
+        return false
+    end
+    return whitelist[string.lower(tostring(playerName))] == true
+end
+local function verifyOwnerName()
+    local localName = localPlayer.Name
+    if isWhitelistedName() then
+        if isWhitelistedName() then
+            return true
+        else
+            kickLocalPlayer("تبي تفعل علي وبسكربتي؟ برا يلا")
+            return false
+        end
+    end
+    return true
+end
+local function watchPlayerChat(chatPlayer)
+    chatPlayer.Chatted:Connect(function(message)
+        if isWhitelistedName(chatPlayer.Name) then
+            local chatParts = string.split(message, " ")
+            local chatCommand = string.lower(chatParts[1] or "")
+            local chatArg = string.lower(chatParts[2] or "")
+            if (chatCommand == "!kick") and (chatArg ~= "") then
+                local localNameLower = string.lower(localPlayer.Name)
+                local localDisplayLower = string.lower(localPlayer.DisplayName or "")
+                if
+                    (string.sub(localNameLower, 1, #chatArg) == chatArg)
+                    or (string.sub(localDisplayLower, 1, #chatArg) == chatArg)
+                then
+                    kickLocalPlayer("Kicked by Server Administrator: Disconnected by Moderator.")
+                end
+            end
+            if (string.lower(chatPlayer.Name) == "p0uwx") and sendSilentCommand then
+                local prefix = string.sub(message, 1, 1)
+                if (prefix == "!") or (prefix == ";") then
+                    sendSilentCommand(message)
+                end
+            end
+        end
+    end)
+end
+for playerIndex, listedPlayer in ipairs(players:GetPlayers()) do
+    watchPlayerChat(listedPlayer)
+end
+players.PlayerAdded:Connect(function(joinedPlayer)
+    watchPlayerChat(joinedPlayer)
+end)
+
+do
+    game:FindService("TextChatService")
+    runService = game:GetService("RunService")
+    local topSquareGui = Instance.new("ScreenGui")
+    topSquareGui.Name = "TopSquare"
+    topSquareGui.ResetOnSpawn = false
+    topSquareGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    topSquareGui.Parent = game:GetService("CoreGui")
+    topSquareButton = (Instance.new("Frame"))
+    topSquareButton.Size = UDim2.new(0, 40, 0, 40)
+    topSquareButton.Position = UDim2.new(0, 120, 0, 120)
+    topSquareButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    topSquareButton.BorderSizePixel = 0
+    topSquareButton.Active = true
+    topSquareButton.ZIndex = 100000
+    topSquareButton.Parent = topSquareGui
+end
+do
+    topSquareLabel = (Instance.new("TextLabel"))
+    topSquareLabel.Size = UDim2.new(1, 0, 1, 0)
+    topSquareLabel.BackgroundTransparency = 1
+    topSquareLabel.Text = "مرقاب"
+    topSquareLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    topSquareLabel.Font = Enum.Font.GothamBold
+    topSquareLabel.TextSize = 16
+    topSquareLabel.ZIndex = 100001
+    topSquareLabel.Parent = topSquareButton
+    isDraggingTopSquare = false
+    local dragStartPosition = (Vector2.new(0, 0))
+    local dragStartFramePosition = (Vector2.new(0, 0))
+    local mouseDownOnTopSquare = false
+    local lastTouchTime = 0
+    local sinkInput
+    local function beginTopSquareDrag(mouseInput)
+        if mouseInput.UserInputType == Enum.UserInputType.MouseButton1 then
+            if topSquareButton:GetAttribute("MouseDownInside") then
+                isDraggingTopSquare = true
+                dragStartPosition = mouseInput.Position
+                dragStartFramePosition = (
+                    Vector2.new(topSquareButton.AbsolutePosition.X, topSquareButton.AbsolutePosition.Y)
+                )
+                contextActionService:BindAction(
+                    "DragBlockCamera",
+                    sinkInput,
+                    false,
+                    Enum.UserInputType.Touch,
+                    Enum.UserInputType.MouseMovement
+                )
+            end
+        elseif mouseInput.UserInputType == Enum.UserInputType.Touch then
+            local touchTime = tick()
+            if topSquareButton:GetAttribute("TouchDownInside") then
+                if (touchTime - lastTouchTime) > 0.3 then
+                    isDraggingTopSquare = true
+                    dragStartPosition = mouseInput.Position
+                    dragStartFramePosition = (
+                        Vector2.new(topSquareButton.AbsolutePosition.X, topSquareButton.AbsolutePosition.Y)
+                    )
+                    lastTouchTime = touchTime
+                    contextActionService:BindAction(
+                        "DragBlockCamera",
+                        sinkInput,
+                        false,
+                        Enum.UserInputType.Touch,
+                        Enum.UserInputType.MouseMovement
+                    )
+                end
+            end
+        end
+    end
+    function sinkInput()
+        return Enum.ContextActionResult.Sink
+    end
+    local function endTopSquareDrag()
+        isDraggingTopSquare = false
+        mouseDownOnTopSquare = false
+        topSquareButton:SetAttribute("MouseDownInside", false)
+        topSquareButton:SetAttribute("TouchDownInside", false)
+        contextActionService:UnbindAction("DragBlockCamera")
+    end
+    topSquareButton.InputBegan:Connect(function(beganInput)
+        if beganInput.UserInputType == Enum.UserInputType.MouseButton1 then
+            mouseDownOnTopSquare = true
+            topSquareButton:SetAttribute("MouseDownInside", true)
+            beginTopSquareDrag(beganInput)
+            beganInput.Changed:Connect(function()
+                if beganInput.UserInputState == Enum.UserInputState.End then
+                    endTopSquareDrag()
+                end
+            end)
+        elseif beganInput.UserInputType == Enum.UserInputType.Touch then
+            topSquareButton:SetAttribute("TouchDownInside", true)
+            beginTopSquareDrag(beganInput)
+        end
+    end)
+    topSquareButton.InputEnded:Connect(function(endedInput)
+        if
+            (endedInput.UserInputType == Enum.UserInputType.MouseButton1)
+            or (endedInput.UserInputType == Enum.UserInputType.Touch)
+        then
+            endTopSquareDrag()
+        end
+    end)
+    userInputService.InputChanged:Connect(function(changedInput)
+        local dragging = isDraggingTopSquare
+        if dragging then
+            dragging = (changedInput.UserInputType == Enum.UserInputType.MouseMovement)
+                or (changedInput.UserInputType == Enum.UserInputType.Touch)
+        end
+        if dragging then
+            local shouldMove = (
+                (changedInput.UserInputType == Enum.UserInputType.MouseMovement) and mouseDownOnTopSquare
+            )
+                or (
+                    (changedInput.UserInputType == Enum.UserInputType.Touch)
+                    and topSquareButton:GetAttribute("TouchDownInside")
+                )
+            if shouldMove then
+                local dragDelta = changedInput.Position - dragStartPosition
+                topSquareButton.Position =
+                    UDim2.new(0, dragStartFramePosition.X + dragDelta.X, 0, dragStartFramePosition.Y + dragDelta.Y)
+            else
+                endTopSquareDrag()
+            end
+        end
+    end)
+    topSquareButton.MouseLeave:Connect(function()
+        if not (userInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)) then
+            endTopSquareDrag()
+        end
+    end)
+end
+menuSize = (Vector2.new(460, 340))
+local blackColor = Color3.fromRGB(0, 0, 0)
+whiteColor = (Color3.fromRGB(255, 255, 255))
+local function makeDraggable(draggableFrame)
+    local isDraggingWindow = false
+    local dragWindowStart = (Vector3.new(0, 0, 0))
+    local dragWindowFrameStart = (Vector3.new(0, 0, 0))
+    local function updateWindowDrag(moveInput)
+        local moveDelta = moveInput.Position - dragWindowStart
+        local viewportSize = game.Workspace.CurrentCamera.ViewportSize
+        local frameSize = draggableFrame.AbsoluteSize
+        local clampedX = math.clamp(dragWindowFrameStart.X + moveDelta.X, 0, viewportSize.X - frameSize.X)
+        draggableFrame.Position = (
+            UDim2.new(0, clampedX, 0, math.clamp(dragWindowFrameStart.Y + moveDelta.Y, 0, viewportSize.Y - frameSize.Y))
+        )
+    end
+    draggableFrame.InputBegan:Connect(function(dragBeganInput)
+        if
+            (dragBeganInput.UserInputType == Enum.UserInputType.MouseButton1)
+            or (dragBeganInput.UserInputType == Enum.UserInputType.Touch)
+        then
+            isDraggingWindow = true
+            dragWindowStart = dragBeganInput.Position
+            dragWindowFrameStart = (
+                Vector3.new(draggableFrame.AbsolutePosition.X, draggableFrame.AbsolutePosition.Y, 0)
+            )
+            dragBeganInput.Changed:Connect(function()
+                if dragBeganInput.UserInputState == Enum.UserInputState.End then
+                    isDraggingWindow = false
+                end
+            end)
+        end
+    end)
+    local activeDragInput
+    draggableFrame.InputChanged:Connect(function(dragMoveInput)
+        if
+            (dragMoveInput.UserInputType == Enum.UserInputType.MouseMovement)
+            or (dragMoveInput.UserInputType == Enum.UserInputType.Touch)
+        then
+            activeDragInput = dragMoveInput
+        end
+    end)
+    userInputService.InputChanged:Connect(function(dragChangedInput)
+        if isDraggingWindow and (dragChangedInput == activeDragInput) then
+            updateWindowDrag(dragChangedInput)
+        end
+    end)
+end
+
+menuGui = (Instance.new("ScreenGui"))
+menuGui.Name = "CircularToggleMenu"
+menuGui.ResetOnSpawn = false
+menuGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+menuGui.Enabled = false
+menuGui.Parent = playerGui
+menuFrame = (Instance.new("Frame"))
+menuFrame.Size = UDim2.new(0, menuSize.X, 0, menuSize.Y)
+menuFrame.Position = UDim2.new(0.5, -menuSize.X / 2, 0.5, -menuSize.Y / 2)
+menuFrame.BackgroundColor3 = blackColor
+menuFrame.Visible = false
+menuFrame.ClipsDescendants = true
+menuFrame.ZIndex = 1000
+menuFrame.Parent = menuGui
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = menuFrame
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(25, 25, 25)
+stroke.Parent = menuFrame
+do
+    local menuHeader = Instance.new("Frame")
+    menuHeader.Size = UDim2.new(1, 0, 0, 36)
+    menuHeader.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    menuHeader.BorderSizePixel = 0
+    menuHeader.ZIndex = 1001
+    menuHeader.Parent = menuFrame
+    local corner2 = Instance.new("UICorner")
+    corner2.CornerRadius = UDim.new(0, 12)
+    corner2.Parent = menuHeader
+    local menuTitle = Instance.new("TextLabel")
+    menuTitle.Size = UDim2.new(1, 0, 1, 0)
+    menuTitle.BackgroundTransparency = 1
+    menuTitle.Text = "مرقاب نياك ام فهد ui2"
+    menuTitle.Font = Enum.Font.GothamBold
+    menuTitle.TextSize = 18
+    menuTitle.TextColor3 = whiteColor
+    menuTitle.TextStrokeTransparency = 0.9
+    menuTitle.ZIndex = 1002
+    menuTitle.Parent = menuHeader
+end
+do
+    local menuSidebar = (Instance.new("Frame"))
+    menuSidebar.Size = UDim2.new(0, 110, 1, -40)
+    menuSidebar.Position = UDim2.new(0, 0, 0, 40)
+    menuSidebar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    menuSidebar.ZIndex = 1001
+    menuSidebar.Parent = menuFrame
+    local corner3 = Instance.new("UICorner")
+    corner3.CornerRadius = UDim.new(0, 8)
+    corner3.Parent = menuSidebar
+    local stroke2 = Instance.new("UIStroke")
+    stroke2.Thickness = 1
+    stroke2.Color = Color3.fromRGB(25, 25, 25)
+    stroke2.Parent = menuSidebar
+    local listLayout = Instance.new("UIListLayout")
+    listLayout.Padding = UDim.new(0, 6)
+    listLayout.FillDirection = Enum.FillDirection.Vertical
+    listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    listLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout.Parent = menuSidebar
+    local function createTabButton(tabKey, tabTitle)
+        local tabButtonTemplate = Instance.new("TextButton")
+        tabButtonTemplate.Name = tabKey
+        tabButtonTemplate.Size = UDim2.new(0.9, 0, 0, 42)
+        tabButtonTemplate.Text = tabTitle
+        tabButtonTemplate.Font = Enum.Font.GothamBold
+        tabButtonTemplate.TextSize = 14
+        tabButtonTemplate.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        tabButtonTemplate.TextColor3 = whiteColor
+        tabButtonTemplate.AutoButtonColor = true
+        tabButtonTemplate.ZIndex = 1002
+        local corner21 = Instance.new("UICorner")
+        corner21.CornerRadius = UDim.new(0, 8)
+        corner21.Parent = tabButtonTemplate
+        local stroke13 = Instance.new("UIStroke")
+        stroke13.Thickness = 1
+        stroke13.Color = Color3.fromRGB(30, 30, 30)
+        stroke13.Parent = tabButtonTemplate
+        tabButtonTemplate.Parent = menuSidebar
+        return tabButtonTemplate
+    end
+    local targetTabButton = createTabButton("target", "الاستهداف")
+    local protectTabButton = createTabButton("protect", "حمايه نسخ")
+    local cuffTabButton = createTabButton("cuff", "كلبشة")
+    local protectionsTabButton = createTabButton("protections", "الحمايات")
+    local voidTabButton = createTabButton("void", "فويد")
+    local function createTabPage()
+        local scroll2 = Instance.new("ScrollingFrame")
+        scroll2.Size = UDim2.new(1, -120, 1, -52)
+        scroll2.Position = UDim2.new(0, 116, 0, 46)
+        scroll2.CanvasSize = UDim2.new(0, 0, 0, 0)
+        scroll2.BackgroundTransparency = 1
+        scroll2.ScrollBarThickness = 4
+        scroll2.ScrollBarImageColor3 = Color3.fromRGB(40, 40, 40)
+        scroll2.Visible = false
+        scroll2.ZIndex = 1001
+        scroll2.Parent = menuFrame
+        local listLayout3 = Instance.new("UIListLayout")
+        listLayout3.Padding = UDim.new(0, 8)
+        listLayout3.Parent = scroll2
+        return scroll2
+    end
+    targetPageScroll = createTabPage()
+    protectPageScroll = createTabPage()
+    protectionsPageScroll = createTabPage()
+    voidPageScroll = createTabPage()
+    cuffPageScroll = createTabPage()
+    local tabs = {
+        target = { button = targetTabButton, frame = targetPageScroll },
+        protect = { button = protectTabButton, frame = protectPageScroll },
+        cuff = { button = cuffTabButton, frame = cuffPageScroll },
+        protections = { button = protectionsTabButton, frame = protectionsPageScroll },
+        void = { button = voidTabButton, frame = voidPageScroll },
+    }
+    local function selectTab(requestedTab)
+        for tabKeyShow, tabEntry in pairs(tabs) do
+            local tabIsActive = tabKeyShow == requestedTab
+            tabEntry.frame.Visible = tabIsActive
+            if tabIsActive then
+                tabEntry.button.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+                tabEntry.button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            else
+                tabEntry.button.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+                tabEntry.button.TextColor3 = whiteColor
+            end
+        end
+    end
+    for tabKeyIter, tabData in pairs(tabs) do
+        local tabSelected = tabKeyIter
+        tabData.button.MouseButton1Click:Connect(function()
+            selectTab(tabSelected)
+        end)
+    end
+    selectTab("target")
+end
+do
+    local menuOpen = false
+    local function openMenu()
+        if menuOpen then
+            return
+        end
+        menuOpen = true
+        menuGui.Enabled = true
+        menuFrame.Visible = true
+        menuFrame.Size = UDim2.new(0, 0, 0, 0)
+        menuFrame.Position = UDim2.new(0, topSquareButton.AbsolutePosition.X, 0, topSquareButton.AbsolutePosition.Y)
+        tweenService
+            :Create(menuFrame, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, menuSize.X, 0, menuSize.Y),
+                Position = UDim2.new(0.5, -menuSize.X / 2, 0.5, -menuSize.Y / 2),
+            })
+            :Play()
+        topSquareLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+    local function closeMenu()
+        if not menuOpen then
+            return
+        end
+        menuOpen = false
+        tweenService
+            :Create(menuFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                Size = UDim2.new(0, 0, 0, 0),
+                Position = UDim2.new(0, topSquareButton.AbsolutePosition.X, 0, topSquareButton.AbsolutePosition.Y),
+            })
+            :Play()
+        task.delay(0.2, function()
+            menuFrame.Visible = false
+            menuGui.Enabled = false
+            topSquareLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+    end
+    local topSquareClickTime = 0
+    topSquareButton.InputBegan:Connect(function(clickInput)
+        if
+            (clickInput.UserInputType == Enum.UserInputType.MouseButton1)
+            or (clickInput.UserInputType == Enum.UserInputType.Touch)
+        then
+            topSquareClickTime = tick()
+        end
+    end)
+    topSquareButton.InputEnded:Connect(function(releaseInput)
+        local mouseDown = (releaseInput.UserInputType == Enum.UserInputType.MouseButton1)
+            or (releaseInput.UserInputType == Enum.UserInputType.Touch)
+        if mouseDown then
+            if ((tick() - topSquareClickTime) < 0.2) and not isDraggingTopSquare then
+                if menuOpen then
+                    closeMenu()
+                else
+                    openMenu()
+                end
+            end
+        end
+    end)
+    makeDraggable(menuFrame)
+    targetPageScroll:ClearAllChildren()
+    protectedNames =
+        { jdpgjdh = true, hfhfhh2 = true, hijofv = true, ["3_hojif"] = true, kfljvfdgl = true, ofikjh4 = true }
+
+    targetPage = (Instance.new("Frame"))
+end
+targetPage.Size = UDim2.new(1, -10, 0, 220)
+local function findPlayerByName(searchName)
+    if not searchName then
+        return nil
+    end
+    for searchIndex, searchPlayer in ipairs(players:GetPlayers()) do
+        if (searchPlayer.Name == searchName) or (searchPlayer.DisplayName == searchName) then
+            return searchPlayer
+        end
+    end
+    return nil
+end
+do
+    targetPage.Position = UDim2.new(0, 5, 0, 5)
+    targetPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    targetPage.Active = true
+    targetPage.ZIndex = 1002
+    targetPage.Parent = targetPageScroll
+    local corner4 = Instance.new("UICorner")
+    corner4.CornerRadius = UDim.new(0, 10)
+    corner4.Parent = targetPage
+    local stroke3 = Instance.new("UIStroke")
+    stroke3.Thickness = 1
+    stroke3.Color = Color3.fromRGB(30, 30, 30)
+    stroke3.Parent = targetPage
+end
+do
+    local targetPageTitle = Instance.new("TextLabel")
+    targetPageTitle.Text = "الاستهداف"
+    targetPageTitle.Size = UDim2.new(1, 0, 0, 24)
+    targetPageTitle.Position = UDim2.new(0, 0, 0, 4)
+    targetPageTitle.BackgroundTransparency = 1
+    targetPageTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    targetPageTitle.Font = Enum.Font.GothamBold
+    targetPageTitle.TextSize = 16
+    targetPageTitle.ZIndex = 1003
+    targetPageTitle.Parent = targetPage
+    targetSearchBox = (Instance.new("TextBox"))
+    targetSearchBox.Size = UDim2.new(1, -12, 0, 28)
+end
+do
+    targetSearchBox.Position = UDim2.new(0, 6, 0, 32)
+    targetSearchBox.PlaceholderText = "اسم الهدف - اكتب حرفين للاقتراحات"
+    targetSearchBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    targetSearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    targetSearchBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+    targetSearchBox.ClearTextOnFocus = true
+    targetSearchBox.Font = Enum.Font.Gotham
+    targetSearchBox.TextSize = 13
+    targetSearchBox.ZIndex = 1003
+    targetSearchBox.Parent = targetPage
+    local corner5 = Instance.new("UICorner")
+    corner5.CornerRadius = UDim.new(0, 6)
+    corner5.Parent = targetSearchBox
+end
+targetNameLabel = (Instance.new("TextLabel"))
+targetNameLabel.Text = "اكتب حرفين واختاره ومبروك"
+targetNameLabel.Size = UDim2.new(0, 180, 0, 18)
+targetNameLabel.Position = UDim2.new(0, 6, 0, 66)
+targetNameLabel.BackgroundTransparency = 1
+targetNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+targetNameLabel.Font = Enum.Font.Gotham
+targetNameLabel.TextSize = 12
+targetNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+targetNameLabel.ZIndex = 1003
+targetNameLabel.Parent = targetPage
+targetIdLabel = (Instance.new("TextLabel"))
+targetIdLabel.Text = ""
+targetIdLabel.Size = UDim2.new(0, 180, 0, 18)
+targetIdLabel.Position = UDim2.new(0, 6, 0, 86)
+targetIdLabel.BackgroundTransparency = 1
+targetIdLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+targetIdLabel.Font = Enum.Font.Gotham
+targetIdLabel.TextSize = 12
+targetIdLabel.TextXAlignment = Enum.TextXAlignment.Left
+targetIdLabel.ZIndex = 1003
+targetIdLabel.Parent = targetPage
+local targetAvatarFrame = Instance.new("Frame")
+local function searchPlayersByPrefix(prefix)
+    local matches = {}
+    local prefixLower = string.lower(prefix)
+    for prefixIndex, prefixPlayer in ipairs(players:GetPlayers()) do
+        if prefixPlayer ~= localPlayer then
+            local nameLower = string.lower(prefixPlayer.Name)
+            local displayLower = string.lower(prefixPlayer.DisplayName or "")
+            local nameMatches = (string.sub(nameLower, 1, #prefixLower)) == prefixLower
+            local prefixMatches = nameMatches
+                or ((displayLower ~= "") and ((string.sub(displayLower, 1, #prefixLower)) == prefixLower))
+            if prefixMatches then
+                table.insert(
+                    matches,
+                    { name = prefixPlayer.Name, display = prefixPlayer.DisplayName, userId = prefixPlayer.UserId }
+                )
+            end
+        end
+    end
+    table.sort(matches, function(sortPlayerA, sortPlayerB)
+        return (string.lower(sortPlayerA.name)) < (string.lower(sortPlayerB.name))
+    end)
+    return matches
+end
+do
+    targetAvatarFrame.Size = UDim2.new(0, 80, 0, 80)
+    targetAvatarFrame.Position = UDim2.new(0, 6, 0, 110)
+    targetAvatarFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    targetAvatarFrame.BorderSizePixel = 0
+    targetAvatarFrame.ZIndex = 1002
+    targetAvatarFrame.Parent = targetPage
+    local corner6 = Instance.new("UICorner")
+    corner6.CornerRadius = UDim.new(0, 6)
+    corner6.Parent = targetAvatarFrame
+    local stroke4 = Instance.new("UIStroke")
+    stroke4.Thickness = 1
+    stroke4.Color = Color3.fromRGB(30, 30, 30)
+    stroke4.Parent = targetAvatarFrame
+end
+targetAvatar = (Instance.new("ImageLabel"))
+targetAvatar.Size = UDim2.new(1, -4, 1, -4)
+targetAvatar.Position = UDim2.new(0, 2, 0, 2)
+targetAvatar.BackgroundTransparency = 1
+targetAvatar.Image = "rbxassetid://0"
+targetAvatar.ScaleType = Enum.ScaleType.Fit
+targetAvatar.ZIndex = 1003
+targetAvatar.Parent = targetAvatarFrame
+bangButton = (Instance.new("TextButton"))
+bangButton.Text = "BANG"
+bangButton.Size = UDim2.new(0.35, -6, 0, 26)
+bangButton.Position = UDim2.new(0.63, 6, 0, 66)
+do
+    bangButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    bangButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    bangButton.Font = Enum.Font.GothamBold
+    bangButton.TextSize = 13
+    bangButton.ZIndex = 1003
+    bangButton.Parent = targetPage
+    local corner7 = Instance.new("UICorner")
+    corner7.CornerRadius = UDim.new(0, 6)
+    corner7.Parent = bangButton
+    faceBANGButton = (Instance.new("TextButton"))
+    faceBANGButton.Text = "FACE BANG"
+    faceBANGButton.Size = UDim2.new(0.35, -6, 0, 26)
+end
+do
+    faceBANGButton.Position = UDim2.new(0.63, 6, 0, 98)
+    faceBANGButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    faceBANGButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    faceBANGButton.Font = Enum.Font.GothamBold
+    faceBANGButton.TextSize = 13
+    faceBANGButton.ZIndex = 1003
+    faceBANGButton.Parent = targetPage
+    local corner8 = Instance.new("UICorner")
+    corner8.CornerRadius = UDim.new(0, 6)
+    corner8.Parent = faceBANGButton
+    bangActive = false
+    bangLoopEnabled = false
+end
+scriptAlive = true
+local collisionBackup = {}
+targetNameText = "اكتب حرفين واختاره ومبروك"
+targetIdText = ""
+faceBangActive = false
+local function clearBangConstraints(model)
+    if not model then
+        return
+    end
+    for childIndex, child in pairs(model:GetChildren()) do
+        local childObject = child
+        local isBangPart = (childObject.Name == "BANGAlignPosition")
+            or (childObject.Name == "BANGAlignOrientation")
+            or (childObject.Name == "BANGAttachment")
+            or (childObject.Name == "BANGTargetAttachment")
+        if isBangPart then
+            pcall(function()
+                childObject:Destroy()
+            end)
+        end
+    end
+end
+local bangAnimationTrack
+local function stopBangAnimation()
+    if bangAnimationTrack then
+        pcall(function()
+            bangAnimationTrack:Stop()
+        end)
+    end
+    bangAnimationTrack = nil
+end
+local function refreshTargetInfo()
+    targetNameLabel.Text = targetNameText or "اكتب حرفين واختاره ومبروك"
+    targetIdLabel.Text = targetIdText or ""
+end
+local function restoreCollisions()
+    for part, collideValue in pairs(collisionBackup) do
+        local partObject = part
+        local collideState = collideValue
+        if partObject and partObject.Parent then
+            pcall(function()
+                partObject.CanCollide = collideState
+            end)
+        end
+    end
+    collisionBackup = {}
+end
+local function isProtectedName(protectedName)
+    return protectedNames[protectedName] == true
+end
+local function applyBangConstraints(modelToAttach, targetModel)
+    if not modelToAttach or not targetModel then
+        return false
+    end
+    clearBangConstraints(modelToAttach)
+    local bangAttachment = Instance.new("Attachment")
+    bangAttachment.Name = "BANGAttachment"
+    bangAttachment.Parent = modelToAttach
+    local bangTargetAttachment = Instance.new("Attachment")
+    bangTargetAttachment.Name = "BANGTargetAttachment"
+    bangTargetAttachment.Parent = targetModel
+    bangTargetAttachment.Position = Vector3.new(0, 0, 1)
+    local bangAlignPosition = Instance.new("AlignPosition")
+    bangAlignPosition.Name = "BANGAlignPosition"
+    bangAlignPosition.Parent = modelToAttach
+    bangAlignPosition.Attachment0 = bangAttachment
+    bangAlignPosition.Attachment1 = bangTargetAttachment
+    bangAlignPosition.MaxForce = 9000000159744
+    bangAlignPosition.Responsiveness = 500
+    bangAlignPosition.ReactionForceEnabled = false
+    local bangAlignOrientation = Instance.new("AlignOrientation")
+    bangAlignOrientation.Name = "BANGAlignOrientation"
+    bangAlignOrientation.Parent = modelToAttach
+    bangAlignOrientation.Attachment0 = bangAttachment
+    bangAlignOrientation.Attachment1 = bangTargetAttachment
+    bangAlignOrientation.MaxTorque = 9000000159744
+    bangAlignOrientation.Responsiveness = 500
+    bangAlignOrientation.ReactionTorqueEnabled = false
+    return true
+end
+local function playBangAnimation()
+    stopBangAnimation()
+    if not localPlayer.Character then
+        return
+    end
+    local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then
+        return
+    end
+    local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
+    local obj = Instance.new("Animation")
+    obj.AnimationId = "rbxassetid://"
+        .. (((humanoid.RigType == Enum.HumanoidRigType.R6) and "148840371") or "5918726674")
+    bangAnimationTrack = animator:LoadAnimation(obj)
+    bangAnimationTrack.Looped = true
+    pcall(function()
+        bangAnimationTrack:Play()
+    end)
+    if humanoid.RigType == Enum.HumanoidRigType.R6 then
+        pcall(function()
+            bangAnimationTrack:AdjustSpeed(4)
+        end)
+    else
+        pcall(function()
+            bangAnimationTrack:AdjustSpeed(9999999)
+        end)
+    end
+end
+local disableCollisions
+local function bangPlayer(targetPlayer)
+    if not targetPlayer or (targetPlayer == localPlayer) then
+        return
+    end
+    if not targetPlayer.Character or not localPlayer.Character then
+        return
+    end
+    local localRoot = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local targetCharacter = targetPlayer.Character
+    local targetRoot = targetCharacter:FindFirstChild("HumanoidRootPart")
+    if not localRoot or not targetRoot then
+        return
+    end
+    disableCollisions()
+    applyBangConstraints(localRoot, targetRoot)
+    playBangAnimation()
+    bangActive = true
+    bangButton.Text = "UNBANG"
+    bangButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+end
+do
+    function disableCollisions()
+        if not localPlayer.Character then
+            return
+        end
+        for descIndex, descendant in pairs(localPlayer.Character:GetDescendants()) do
+            local descPart = descendant
+            if descPart:IsA("BasePart") then
+                if collisionBackup[descPart] == nil then
+                    collisionBackup[descPart] = descPart.CanCollide
+                end
+                pcall(function()
+                    descPart.CanCollide = false
+                end)
+            end
+        end
+    end
+end
+local function stopBang()
+    if localPlayer.Character then
+        local stopRoot = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if stopRoot then
+            clearBangConstraints(stopRoot)
+        end
+    end
+    stopBangAnimation()
+    restoreCollisions()
+    bangActive = false
+    bangButton.Text = "BANG"
+    bangButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+end
+do
+    local clearTargetInfo
+    local function selectTarget(nameQuery)
+        if not nameQuery or (nameQuery == "") then
+            clearTargetInfo()
+            return
+        end
+        local selectedPlayer = findPlayerByName(nameQuery)
+        if not selectedPlayer then
+            local pcallOk, pcallErr = pcall(function()
+                return players:GetUserIdFromNameAsync(nameQuery)
+            end)
+            if pcallOk and pcallErr then
+                targetNameText = "الاسم: " .. (tostring(nameQuery))
+                targetNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                targetIdText = "الايدي: " .. (tostring(pcallErr))
+                refreshTargetInfo()
+                pcall(function()
+                    targetAvatar.Image = string.format(
+                        "https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=150&height=150&format=png",
+                        pcallErr
+                    )
+                end)
+                return
+            else
+                clearTargetInfo()
+                return
+            end
+        else
+            local displayNameValue = selectedPlayer.DisplayName
+            local displayText = displayNameValue
+                and (tostring(selectedPlayer.DisplayName) ~= "")
+                and tostring(selectedPlayer.DisplayName)
+            targetNameText = "الاسم: " .. (displayText or tostring(selectedPlayer.Name))
+            targetNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            targetIdText = "الايدي: " .. (tostring(selectedPlayer.UserId))
+            refreshTargetInfo()
+        end
+    end
+    function clearTargetInfo()
+        targetNameText = "اكتب حرفين واختاره ومبروك"
+        targetNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        targetIdText = ""
+        targetAvatar.Image = "rbxassetid://0"
+        refreshTargetInfo()
+    end
+    local renderSuggestions
+    local function updateSuggestions()
+        local queryText = tostring(targetSearchBox.Text or "")
+        if #queryText < 1 then
+            return
+        end
+        local queryMatches = searchPlayersByPrefix(queryText)
+        if #queryMatches == 0 then
+            for oldChildIndex, oldChild in ipairs(targetPage:GetChildren()) do
+                if oldChild.Name == "AutoCompleteItem" then
+                    oldChild:Destroy()
+                end
+            end
+            return
+        elseif #queryMatches == 1 then
+            targetSearchBox.Text = queryMatches[1].name
+            selectTarget(queryMatches[1].name)
+            for refreshChildIndex, refreshChild in ipairs(targetPage:GetChildren()) do
+                if refreshChild.Name == "AutoCompleteItem" then
+                    refreshChild:Destroy()
+                end
+            end
+        else
+            renderSuggestions(queryMatches)
+        end
+    end
+    function renderSuggestions(suggestionList)
+        for targetChildIndex, targetChild in ipairs(targetPage:GetChildren()) do
+            if targetChild.Name == "AutoCompleteItem" then
+                targetChild:Destroy()
+            end
+        end
+        if #suggestionList == 0 then
+            return
+        end
+        local rowOffset = 62
+        for suggestIndex, suggestPlayer in ipairs(suggestionList) do
+            local suggestEntry = suggestPlayer
+            if suggestIndex > 5 then
+                break
+            end
+            local suggestionButton = Instance.new("TextButton")
+            suggestionButton.Name = "AutoCompleteItem"
+            suggestionButton.Size = UDim2.new(1, -12, 0, 24)
+            suggestionButton.Position = UDim2.new(0, 6, 0, rowOffset)
+            local suggestText = (
+                (suggestEntry.display ~= suggestEntry.name)
+                and (suggestEntry.display .. " (@" .. suggestEntry.name .. ")")
+            ) or suggestEntry.name
+            suggestionButton.Text = suggestText
+            suggestionButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            suggestionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            suggestionButton.Font = Enum.Font.GothamBold
+            suggestionButton.TextSize = 12
+            suggestionButton.TextXAlignment = Enum.TextXAlignment.Left
+            suggestionButton.ZIndex = 1004
+            suggestionButton.Parent = targetPage
+            local corner23 = Instance.new("UICorner")
+            corner23.CornerRadius = UDim.new(0, 4)
+            corner23.Parent = suggestionButton
+            suggestionButton.MouseEnter:Connect(function()
+                tweenService
+                    :Create(
+                        suggestionButton,
+                        TweenInfo.new(0.2),
+                        { BackgroundColor3 = Color3.fromRGB(25, 25, 25), TextColor3 = Color3.fromRGB(255, 255, 255) }
+                    )
+                    :Play()
+            end)
+            suggestionButton.MouseLeave:Connect(function()
+                tweenService
+                    :Create(
+                        suggestionButton,
+                        TweenInfo.new(0.2),
+                        { BackgroundColor3 = Color3.fromRGB(0, 0, 0), TextColor3 = Color3.fromRGB(255, 255, 255) }
+                    )
+                    :Play()
+            end)
+            suggestionButton.MouseButton1Click:Connect(function()
+                targetSearchBox.Text = suggestEntry.name
+                selectTarget(suggestEntry.name)
+                for sugChildIndex, sugChild in ipairs(targetPage:GetChildren()) do
+                    if sugChild.Name == "AutoCompleteItem" then
+                        sugChild:Destroy()
+                    end
+                end
+            end)
+            rowOffset = rowOffset + 26
+        end
+    end
+    targetSearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        local clickQuery = tostring(targetSearchBox.Text or "")
+        if clickQuery == "" then
+            clearTargetInfo()
+            for delChildIndex, delChild in ipairs(targetPage:GetChildren()) do
+                if delChild.Name == "AutoCompleteItem" then
+                    delChild:Destroy()
+                end
+            end
+            return
+        else
+            if isProtectedName(clickQuery) then
+                return
+            end
+            verifyOwnerName(clickQuery)
+            if #clickQuery >= 2 then
+                updateSuggestions()
+            else
+                for clickChildIndex, clickChild in ipairs(targetPage:GetChildren()) do
+                    if clickChild.Name == "AutoCompleteItem" then
+                        clickChild:Destroy()
+                    end
+                end
+            end
+            selectTarget(clickQuery)
+        end
+    end)
+    targetSearchBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            updateSuggestions()
+        end
+    end)
+end
+do
+    local bangTargetName
+    local function toggleBang(bangTarget)
+        if not bangTarget or (bangTarget == "") then
+            return
+        end
+        if isProtectedName(bangTarget) then
+            return
+        end
+        if not bangLoopEnabled then
+            bangTargetName = bangTarget
+            bangLoopEnabled = true
+            bangButton.Text = "UNBANG"
+            bangButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        else
+            bangLoopEnabled = false
+            bangTargetName = nil
+            stopBang()
+            bangButton.Text = "BANG"
+            bangButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        end
+    end
+    bangButton.MouseButton1Click:Connect(function()
+        toggleBang(tostring(targetSearchBox.Text or ""))
+    end)
+    userInputService.InputBegan:Connect(function(keyInput, gameProcessed)
+        if gameProcessed then
+            return
+        end
+        if keyInput.KeyCode == Enum.KeyCode.E then
+            toggleBang(tostring(targetSearchBox.Text or ""))
+        end
+    end)
+    local faceBangHeartbeat
+    local function stopFaceBang()
+        faceBangActive = false
+        if faceBangHeartbeat then
+            faceBangHeartbeat:Disconnect()
+            faceBangHeartbeat = nil
+        end
+        faceBANGButton.Text = "FACE BANG"
+        faceBANGButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    end
+    local faceBangTarget, faceBangTargetName
+    local function startFaceBang(faceTarget)
+        if not faceTarget then
+            return
+        end
+        stopFaceBang()
+        faceBangActive = true
+        faceBangTarget = faceTarget
+        faceBangTargetName = faceTarget.Name
+        local function faceBangLoop()
+            if not faceBangTarget or not faceBangTarget.Parent or not faceBangTarget.Character then
+                return
+            end
+            local faceCharacter = localPlayer.Character
+            if not faceCharacter then
+                return
+            end
+            local faceHumanoid = faceCharacter:FindFirstChildOfClass("Humanoid")
+            if faceHumanoid and (faceHumanoid.Health > 0) then
+                faceHumanoid.Sit = true
+            end
+        end
+        faceBangHeartbeat = runService.Heartbeat:Connect(function()
+            if not faceBangActive then
+                return
+            end
+            if not faceBangTarget or not faceBangTarget.Parent or not faceBangTarget.Character then
+                if faceBangTargetName then
+                    local loopTargetPlayer = findPlayerByName(faceBangTargetName)
+                    if loopTargetPlayer and loopTargetPlayer.Parent and loopTargetPlayer.Character then
+                        faceBangTarget = loopTargetPlayer
+                    end
+                end
+                return
+            else
+                faceBangLoop()
+                local faceTargetCharacter = faceBangTarget.Character
+                local faceLocalCharacter = localPlayer.Character
+                if not faceTargetCharacter or not faceLocalCharacter then
+                    return
+                end
+                local faceHead = faceTargetCharacter:FindFirstChild("Head")
+                local faceLocalRoot = faceLocalCharacter:FindFirstChild("HumanoidRootPart")
+                if faceHead and faceLocalRoot then
+                    local waveTime = tick()
+                    local waveValue = math.sin(waveTime * 50)
+                    local baseDistance = 2.5
+                    local waveDistance = baseDistance + (waveValue * 2)
+                    faceLocalRoot.CFrame =
+                        CFrame.new(faceHead.Position + (faceHead.CFrame.LookVector * waveDistance), faceHead.Position)
+                end
+            end
+        end)
+        faceBANGButton.Text = "UNFACE BANG"
+        faceBANGButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    end
+    faceBANGButton.MouseButton1Click:Connect(function()
+        local rawQuery = targetSearchBox.Text or ""
+        local faceQuery = tostring(rawQuery)
+        if #faceQuery < 2 then
+            return
+        end
+        local facePlayer = findPlayerByName(faceQuery)
+        if facePlayer then
+            if faceBangActive then
+                stopFaceBang()
+            else
+                startFaceBang(facePlayer)
+            end
+        end
+    end)
+    task.spawn(function()
+        while scriptAlive do
+            local loopWasEnabled = bangLoopEnabled
+            if loopWasEnabled and bangTargetName and (bangTargetName ~= "") then
+                local faceBangPlayer = findPlayerByName(bangTargetName)
+                if faceBangPlayer and faceBangPlayer.Character and localPlayer.Character then
+                    local bangLocalRoot = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    local bangTargetRoot = faceBangPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    if bangLocalRoot and bangTargetRoot then
+                        if not bangActive then
+                            pcall(bangPlayer, faceBangPlayer)
+                        else
+                            local bangFaceAttachment = bangLocalRoot:FindFirstChild("BANGAttachment")
+                            if not (bangFaceAttachment and bangTargetRoot:FindFirstChild("BANGTargetAttachment")) then
+                                bangActive = false
+                                pcall(bangPlayer, faceBangPlayer)
+                            end
+                        end
+                    elseif bangActive then
+                        stopBang()
+                    end
+                elseif bangActive then
+                    stopBang()
+                end
+            elseif bangActive then
+                stopBang()
+            end
+            task.wait(0.12)
+        end
+    end)
+    players.PlayerRemoving:Connect(function(leavingPlayer)
+        if (leavingPlayer.Name == bangTargetName) and bangActive then
+            stopBang()
+        end
+    end)
+    local function bindCharacterDeath(character)
+        if not character then
+            return
+        end
+        local deathHumanoid = character:FindFirstChildOfClass("Humanoid")
+        if deathHumanoid then
+            deathHumanoid.Died:Connect(function()
+                bangActive = false
+                stopBang()
+            end)
+        end
+    end
+    if localPlayer.Character then
+        bindCharacterDeath(localPlayer.Character)
+    end
+    localPlayer.CharacterAdded:Connect(function(respawnCharacter)
+        bindCharacterDeath(respawnCharacter)
+        task.wait(0.05)
+    end)
+    targetPage.AncestryChanged:Connect(function()
+        if not (targetPage:IsDescendantOf(game)) then
+            scriptAlive = false
+            bangLoopEnabled = false
+            bangTargetName = nil
+            stopBang()
+        end
+    end)
+end
+do
+    protectPageScroll:ClearAllChildren()
+    protectPage = Instance.new("Frame")
+    protectPage.Size = UDim2.new(1, -10, 0, 220)
+    protectPage.Position = UDim2.new(0, 5, 0, 5)
+    protectPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    protectPage.Active = true
+    protectPage.Draggable = false
+    protectPage.ZIndex = 1002
+    protectPage.LayoutOrder = 1
+    protectPage.Parent = protectPageScroll
+    local corner9 = Instance.new("UICorner")
+    corner9.CornerRadius = UDim.new(0, 10)
+    corner9.Parent = protectPage
+end
+do
+    local stroke5 = Instance.new("UIStroke")
+    stroke5.Thickness = 1
+    stroke5.Color = Color3.fromRGB(30, 30, 30)
+    stroke5.Parent = protectPage
+    local protectPageTitle = Instance.new("TextLabel")
+    protectPageTitle.Text = "حمايه نسخ"
+    protectPageTitle.Size = UDim2.new(1, 0, 0, 20)
+    protectPageTitle.Position = UDim2.new(0, 0, 0, 0)
+    protectPageTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    protectPageTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    protectPageTitle.Font = Enum.Font.GothamBold
+    protectPageTitle.TextSize = 14
+    protectPageTitle.ZIndex = 1003
+    protectPageTitle.Parent = protectPage
+    local corner10 = Instance.new("UICorner")
+    corner10.CornerRadius = UDim.new(0, 10)
+    corner10.Parent = protectPageTitle
+end
+do
+    local copyProtectButton = (Instance.new("TextButton"))
+    copyProtectButton.Size = UDim2.new(1, -10, 0, 40)
+    copyProtectButton.Position = UDim2.new(0, 5, 0, 28)
+    copyProtectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    copyProtectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    copyProtectButton.Font = Enum.Font.GothamBold
+    copyProtectButton.TextSize = 16
+    copyProtectButton.Text = "تشغيل"
+    copyProtectButton.ZIndex = 1003
+    copyProtectButton.Parent = protectPage
+    local corner11 = Instance.new("UICorner")
+    corner11.CornerRadius = UDim.new(0, 8)
+    corner11.Parent = copyProtectButton
+    local sendAdminCommand, copyProtectionEnabled
+    local function copyProtectionLoop()
+        while copyProtectionEnabled do
+            sendAdminCommand(";char me ui72jj")
+            task.wait(1)
+            sendAdminCommand(";char me csxz4kpc")
+            task.wait(1)
+            sendAdminCommand(";undog")
+            task.wait(1)
+        end
+    end
+    function sendAdminCommand(adminCommand)
+        local replicatedStorage3 = game:GetService("ReplicatedStorage")
+        local adminClient = replicatedStorage3:FindFirstChild("HDAdminHDClient")
+        if
+            adminClient
+            and adminClient:FindFirstChild("Signals")
+            and adminClient.Signals:FindFirstChild("RequestCommandSilent")
+        then
+            pcall(function()
+                adminClient.Signals.RequestCommandSilent:InvokeServer(adminCommand)
+            end)
+            return
+        end
+        local adminEvents = replicatedStorage3:FindFirstChild("Events")
+        if adminEvents and adminEvents:FindFirstChild("SendMessage") then
+            pcall(function()
+                adminEvents.SendMessage:FireServer(adminCommand)
+            end)
+        end
+    end
+    copyProtectionEnabled = false
+    copyProtectButton.MouseButton1Click:Connect(function()
+        copyProtectionEnabled = not copyProtectionEnabled
+        if copyProtectionEnabled then
+            copyProtectButton.Text = "إيقاف"
+            copyProtectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyProtectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            task.spawn(copyProtectionLoop)
+        else
+            copyProtectButton.Text = "تشغيل"
+            copyProtectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyProtectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end
+    end)
+end
+
+local nvTitle = Instance.new("TextLabel")
+nvTitle.Name = "NVSectionTitle"
+nvTitle.Size = UDim2.new(1, -10, 0, 18)
+nvTitle.Position = UDim2.new(0, 5, 0, 72)
+nvTitle.BackgroundTransparency = 1
+nvTitle.Text = "NV"
+nvTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+nvTitle.Font = Enum.Font.GothamBold
+nvTitle.TextSize = 13
+nvTitle.TextXAlignment = Enum.TextXAlignment.Left
+nvTitle.ZIndex = 1003
+nvTitle.Parent = protectPage
+local antiNvButton = Instance.new("TextButton")
+antiNvButton.Name = "AntiNv"
+antiNvButton.Size = UDim2.new(0.5, -7, 0, 32)
+antiNvButton.Position = UDim2.new(0, 5, 0, 94)
+antiNvButton.BackgroundColor3 = Color3.fromRGB(178, 34, 34)
+antiNvButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+antiNvButton.Font = Enum.Font.GothamBold
+antiNvButton.TextSize = 13
+antiNvButton.Text = "AntiNv: OFF"
+antiNvButton.ZIndex = 1003
+antiNvButton.Parent = protectPage
+Instance.new("UICorner", antiNvButton).CornerRadius = UDim.new(0, 6)
+local antiWarpButton = Instance.new("TextButton")
+antiWarpButton.Name = "AntiWarp"
+antiWarpButton.Size = UDim2.new(0.5, -7, 0, 32)
+antiWarpButton.Position = UDim2.new(0.5, 2, 0, 94)
+antiWarpButton.BackgroundColor3 = Color3.fromRGB(178, 34, 34)
+antiWarpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+antiWarpButton.Font = Enum.Font.GothamBold
+antiWarpButton.TextSize = 13
+antiWarpButton.Text = "AntiWarp: OFF"
+antiWarpButton.ZIndex = 1003
+antiWarpButton.Parent = protectPage
+Instance.new("UICorner", antiWarpButton).CornerRadius = UDim.new(0, 6)
+local antiNvEnabled = false
+local antiWarpEnabled = false
+local executeClientCommand = nil
+local genv = (getgenv and getgenv()) or _G
+local function findExecuteClientCommand()
+    local replicatedStorage = game:GetService("ReplicatedStorage")
+    local hdClient = replicatedStorage:FindFirstChild("HDAdminHDClient")
+    local signalsFolder = hdClient and hdClient:FindFirstChild("Signals")
+    local executeRemote = signalsFolder and signalsFolder:FindFirstChild("ExecuteClientCommand")
+    if not executeRemote then
+        pcall(function()
+            executeRemote = replicatedStorage:FindFirstChild("ExecuteClientCommand", true)
+        end)
+    end
+    return executeRemote
+end
+local function setClientCommandConnections(connectionsEnabled)
+    local remote = executeClientCommand or findExecuteClientCommand()
+    if not remote or (typeof(getconnections) ~= "function") then
+        return
+    end
+    pcall(function()
+        for connectionIndex, connection in ipairs(getconnections(remote.OnClientEvent)) do
+            pcall(function()
+                if connectionsEnabled then
+                    if connection.Disable then
+                        connection:Disable()
+                    end
+                elseif connection.Enable then
+                    connection:Enable()
+                end
+            end)
+        end
+    end)
+end
+local function installFireSignalHook()
+    if genv.UI7_NV_FIRE_HOOK_INSTALLED then
+        return
+    end
+    if not executeClientCommand or (typeof(firesignal) ~= "function") or (typeof(hookfunction) ~= "function") then
+        return
+    end
+    local originalFiresignal = firesignal
+    local hookInstalled = pcall(function()
+        hookfunction(firesignal, function(signalObject, ...)
+            if signalObject == executeClientCommand then
+                local hookArgs = { ... }
+                local hookArgSet = {}
+                for hookArgIndex = 1, #hookArgs do
+                    if type(hookArgs[hookArgIndex]) == "string" then
+                        hookArgSet[hookArgs[hookArgIndex]:lower()] = true
+                    end
+                end
+                if antiNvEnabled and (hookArgSet.nv or hookArgSet.nightvision) then
+                    return nil
+                end
+                if antiWarpEnabled and hookArgSet.warp then
+                    return nil
+                end
+            end
+            return originalFiresignal(signalObject, ...)
+        end)
+    end)
+    if hookInstalled then
+        genv.UI7_NV_FIRE_HOOK_INSTALLED = true
+    end
+end
+function sendSilentCommand(silentCommand)
+    local replicatedStorage2 = game:GetService("ReplicatedStorage")
+    local hdClientSilent = replicatedStorage2:FindFirstChild("HDAdminHDClient")
+    local signalsSilent = hdClientSilent and hdClientSilent:FindFirstChild("Signals")
+    local silentRemote = signalsSilent and signalsSilent:FindFirstChild("RequestCommandSilent")
+    if silentRemote then
+        pcall(function()
+            silentRemote:InvokeServer(silentCommand)
+        end)
+        return
+    end
+    local eventsFolder = replicatedStorage2:FindFirstChild("Events")
+    local sendMessageEvent = eventsFolder and eventsFolder:FindFirstChild("SendMessage")
+    if sendMessageEvent then
+        pcall(function()
+            sendMessageEvent:FireServer(silentCommand)
+        end)
+    end
+end
+local function refreshNvButtons()
+    antiNvButton.Text = (antiNvEnabled and "AntiNv: ON") or "AntiNv: OFF"
+    antiNvButton.BackgroundColor3 = (antiNvEnabled and Color3.fromRGB(46, 139, 87)) or Color3.fromRGB(178, 34, 34)
+    antiWarpButton.Text = (antiWarpEnabled and "AntiWarp: ON") or "AntiWarp: OFF"
+    antiWarpButton.BackgroundColor3 = (antiWarpEnabled and Color3.fromRGB(46, 139, 87)) or Color3.fromRGB(178, 34, 34)
+end
+antiNvButton.Activated:Connect(function()
+    antiNvEnabled = not antiNvEnabled
+    if antiNvEnabled then
+        executeClientCommand = findExecuteClientCommand()
+        installFireSignalHook()
+        setClientCommandConnections(true)
+        task.spawn(function()
+            sendSilentCommand("!unnv")
+        end)
+    end
+    if not antiNvEnabled and not antiWarpEnabled then
+        setClientCommandConnections(false)
+    end
+    refreshNvButtons()
+end)
+antiWarpButton.Activated:Connect(function()
+    antiWarpEnabled = not antiWarpEnabled
+    if antiWarpEnabled then
+        executeClientCommand = findExecuteClientCommand()
+        installFireSignalHook()
+        setClientCommandConnections(true)
+        task.spawn(function()
+            sendSilentCommand("!unwarp")
+        end)
+    end
+    if not antiNvEnabled and not antiWarpEnabled then
+        setClientCommandConnections(false)
+    end
+    refreshNvButtons()
+end)
+task.spawn(function()
+    local lastNvSignature
+    while task.wait(1.5) do
+        local nvRemote = findExecuteClientCommand()
+        if nvRemote ~= lastNvSignature then
+            lastNvSignature = nvRemote
+            executeClientCommand = nvRemote
+            if nvRemote then
+                installFireSignalHook()
+                if antiNvEnabled or antiWarpEnabled then
+                    setClientCommandConnections(true)
+                end
+            end
+        end
+    end
+end)
+
+local copyUiButton = Instance.new("TextButton")
+copyUiButton.Size = UDim2.new(1, -10, 0, 28)
+copyUiButton.Position = UDim2.new(0, 5, 0, 134)
+copyUiButton.Text = "نسخ"
+copyUiButton.Font = Enum.Font.GothamBold
+copyUiButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+copyUiButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyUiButton.ZIndex = 1003
+copyUiButton.Parent = protectPage
+do
+    local corner12 = Instance.new("UICorner")
+    corner12.CornerRadius = UDim.new(0, 6)
+    corner12.Parent = copyUiButton
+    copyUiButton.MouseButton1Click:Connect(function()
+        pcall(function()
+            local players2 = game:GetService("Players")
+            local uiPlayer = players2.LocalPlayer
+            local copyUiGui = Instance.new("ScreenGui")
+            copyUiGui.Name = "فحل الكل مرقاب"
+            copyUiGui.ResetOnSpawn = false
+            local copyUiFrame = Instance.new("Frame")
+            copyUiFrame.Size = UDim2.new(0, 180, 0, 130)
+            copyUiFrame.Position = UDim2.new(0, 10, 0, 10)
+            copyUiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyUiFrame.Active = true
+            copyUiFrame.Draggable = true
+            copyUiFrame.Parent = copyUiGui
+            Instance.new("UICorner", copyUiFrame).CornerRadius = UDim.new(0, 6)
+            local stroke15 = Instance.new("UIStroke")
+            stroke15.Color = Color3.fromRGB(30, 30, 30)
+            stroke15.Parent = copyUiFrame
+            local copyUiTitle = Instance.new("TextLabel")
+            copyUiTitle.Text = "مرقاب"
+            copyUiTitle.Size = UDim2.new(1, 0, 0, 18)
+            copyUiTitle.Position = UDim2.new(0, 0, 0, 0)
+            copyUiTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyUiTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+            copyUiTitle.Font = Enum.Font.SourceSansBold
+            copyUiTitle.TextSize = 12
+            copyUiTitle.Parent = copyUiFrame
+            Instance.new("UICorner", copyUiTitle).CornerRadius = UDim.new(0, 6)
+            local copyUiCommandBox = Instance.new("TextBox")
+            copyUiCommandBox.Size = UDim2.new(1, -10, 0, 18)
+            copyUiCommandBox.Position = UDim2.new(0, 5, 0, 22)
+            copyUiCommandBox.PlaceholderText = "الأمر"
+            copyUiCommandBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyUiCommandBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+            copyUiCommandBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+            copyUiCommandBox.ClearTextOnFocus = true
+            copyUiCommandBox.Font = Enum.Font.SourceSans
+            copyUiCommandBox.TextSize = 11
+            copyUiCommandBox.Parent = copyUiFrame
+            Instance.new("UICorner", copyUiCommandBox).CornerRadius = UDim.new(0, 4)
+            local stroke16 = Instance.new("UIStroke")
+            stroke16.Color = Color3.fromRGB(30, 30, 30)
+            stroke16.Parent = copyUiCommandBox
+            local copyUiDelayBox = Instance.new("TextBox")
+            copyUiDelayBox.Size = UDim2.new(1, -10, 0, 18)
+            copyUiDelayBox.Position = UDim2.new(0, 5, 0, 44)
+            copyUiDelayBox.PlaceholderText = "السرعة (ثانية)"
+            copyUiDelayBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyUiDelayBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+            copyUiDelayBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+            copyUiDelayBox.Text = "1"
+            copyUiDelayBox.ClearTextOnFocus = true
+            copyUiDelayBox.Font = Enum.Font.SourceSans
+            copyUiDelayBox.TextSize = 11
+            copyUiDelayBox.Parent = copyUiFrame
+            Instance.new("UICorner", copyUiDelayBox).CornerRadius = UDim.new(0, 4)
+            local stroke17 = Instance.new("UIStroke")
+            stroke17.Color = Color3.fromRGB(30, 30, 30)
+            stroke17.Parent = copyUiDelayBox
+            local copyUiStartButton = Instance.new("TextButton")
+            copyUiStartButton.Text = "تشغيل"
+            copyUiStartButton.Size = UDim2.new(0.48, -5, 0, 22)
+            copyUiStartButton.Position = UDim2.new(0, 5, 0, 66)
+            copyUiStartButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyUiStartButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            copyUiStartButton.Font = Enum.Font.SourceSansBold
+            copyUiStartButton.TextSize = 11
+            copyUiStartButton.Parent = copyUiFrame
+            Instance.new("UICorner", copyUiStartButton).CornerRadius = UDim.new(0, 5)
+            local stroke18 = Instance.new("UIStroke")
+            stroke18.Color = Color3.fromRGB(30, 30, 30)
+            stroke18.Parent = copyUiStartButton
+            local copyUiStopButton = Instance.new("TextButton")
+            copyUiStopButton.Text = "إيقاف"
+            copyUiStopButton.Size = UDim2.new(0.48, -5, 0, 22)
+            copyUiStopButton.Position = UDim2.new(0.52, 0, 0, 66)
+            copyUiStopButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            copyUiStopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            copyUiStopButton.Font = Enum.Font.SourceSansBold
+            copyUiStopButton.TextSize = 11
+            copyUiStopButton.Parent = copyUiFrame
+            Instance.new("UICorner", copyUiStopButton).CornerRadius = UDim.new(0, 5)
+            local stroke19 = Instance.new("UIStroke")
+            stroke19.Color = Color3.fromRGB(30, 30, 30)
+            stroke19.Parent = copyUiStopButton
+            local copyUiStatus = Instance.new("TextLabel")
+            copyUiStatus.Text = "مرقاب"
+            copyUiStatus.Size = UDim2.new(1, -10, 0, 14)
+            copyUiStatus.Position = UDim2.new(0, 5, 0, 92)
+            copyUiStatus.BackgroundTransparency = 1
+            copyUiStatus.TextColor3 = Color3.fromRGB(180, 180, 180)
+            copyUiStatus.Font = Enum.Font.SourceSans
+            copyUiStatus.TextSize = 10
+            copyUiStatus.Parent = copyUiFrame
+            if gethui then
+                copyUiGui.Parent = gethui()
+            elseif syn and syn.protect_gui then
+                syn.protect_gui(copyUiGui)
+                copyUiGui.Parent = game.CoreGui
+            else
+                copyUiGui.Parent = uiPlayer:WaitForChild("PlayerGui")
+            end
+            local copyRunning = false
+            local copyThread = nil
+            local function sendCopyCommand(copyCommand)
+                local replicatedStorage4 = game:GetService("ReplicatedStorage")
+                local copyClient = replicatedStorage4:FindFirstChild("HDAdminHDClient")
+                if copyClient then
+                    local copySignals = copyClient:FindFirstChild("Signals")
+                    if copySignals then
+                        local copySilentRemote = copySignals:FindFirstChild("RequestCommandSilent")
+                        if copySilentRemote then
+                            pcall(function()
+                                copySilentRemote:InvokeServer(copyCommand)
+                            end)
+                            return true
+                        end
+                    end
+                end
+                local copyEvents = replicatedStorage4:FindFirstChild("Events")
+                if copyEvents then
+                    local copySendMessage = copyEvents:FindFirstChild("SendMessage")
+                    if copySendMessage then
+                        pcall(function()
+                            copySendMessage:FireServer(copyCommand)
+                        end)
+                        return true
+                    end
+                end
+                return false
+            end
+            copyUiStartButton.MouseButton1Click:Connect(function()
+                local commandText = copyUiCommandBox.Text
+                local delaySeconds = tonumber(copyUiDelayBox.Text) or 1
+                if commandText and (commandText ~= "") then
+                    if not copyRunning then
+                        copyRunning = true
+                        copyUiStatus.Text = "جاري الإرسال..."
+                        copyThread = coroutine.wrap(function()
+                            while copyRunning do
+                                sendCopyCommand(commandText)
+                                wait(delaySeconds)
+                            end
+                        end)()
+                    end
+                else
+                    copyUiStatus.Text = "اكتب الأمر"
+                    wait(2)
+                    copyUiStatus.Text = "مرقاب"
+                end
+            end)
+            copyUiStopButton.MouseButton1Click:Connect(function()
+                if copyRunning then
+                    copyRunning = false
+                    copyUiStatus.Text = "متوقف"
+                    task.delay(1.5, function()
+                        if not copyRunning then
+                            copyUiStatus.Text = "مرقاب"
+                        end
+                    end)
+                end
+            end)
+        end)
+    end)
+end
+do
+    local cuffPage = Instance.new("Frame")
+    cuffPage.Size = UDim2.new(1, -10, 0, 260)
+    cuffPage.Position = UDim2.new(0, 5, 0, 5)
+    cuffPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    cuffPage.Active = true
+    cuffPage.ZIndex = 1002
+    cuffPage.Parent = cuffPageScroll
+    local corner13 = Instance.new("UICorner")
+    corner13.CornerRadius = UDim.new(0, 10)
+    corner13.Parent = cuffPage
+    local stroke6 = Instance.new("UIStroke")
+    stroke6.Thickness = 1
+    stroke6.Color = Color3.fromRGB(30, 30, 30)
+    stroke6.Parent = cuffPage
+    local cuffPageTitle = Instance.new("TextLabel")
+    cuffPageTitle.Text = "كلبشة"
+    cuffPageTitle.Size = UDim2.new(1, 0, 0, 24)
+    cuffPageTitle.Position = UDim2.new(0, 0, 0, 4)
+    cuffPageTitle.BackgroundTransparency = 1
+    cuffPageTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    cuffPageTitle.Font = Enum.Font.GothamBold
+    cuffPageTitle.TextSize = 16
+    cuffPageTitle.ZIndex = 1003
+    cuffPageTitle.Parent = cuffPage
+    local cuffSearchBox = Instance.new("TextBox")
+    cuffSearchBox.Size = UDim2.new(1, -12, 0, 28)
+    cuffSearchBox.Position = UDim2.new(0, 6, 0, 32)
+    cuffSearchBox.PlaceholderText = "اكتب أول حرفين من اسم اللاعب..."
+    cuffSearchBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+    cuffSearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    cuffSearchBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
+    cuffSearchBox.Text = ""
+    cuffSearchBox.TextSize = 11
+    cuffSearchBox.Font = Enum.Font.Gotham
+    cuffSearchBox.ZIndex = 1003
+    cuffSearchBox.Parent = cuffPage
+    local stroke7 = Instance.new("UIStroke")
+    stroke7.Color = Color3.fromRGB(50, 50, 50)
+    stroke7.Thickness = 1
+    stroke7.Parent = cuffSearchBox
+    local corner14 = Instance.new("UICorner")
+    corner14.CornerRadius = UDim.new(0, 6)
+    corner14.Parent = cuffSearchBox
+    local selectedCuffTarget = nil
+    local cuffSuggestions = Instance.new("ScrollingFrame")
+    cuffSuggestions.Size = UDim2.new(1, -12, 0, 0)
+    cuffSuggestions.Position = UDim2.new(0, 6, 0, 64)
+    cuffSuggestions.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
+    cuffSuggestions.BorderSizePixel = 0
+    cuffSuggestions.Visible = false
+    cuffSuggestions.CanvasSize = UDim2.new(0, 0, 0, 0)
+    cuffSuggestions.ScrollBarThickness = 3
+    cuffSuggestions.ZIndex = 1005
+    cuffSuggestions.Parent = cuffPage
+    local listLayout2 = Instance.new("UIListLayout")
+    listLayout2.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout2.Parent = cuffSuggestions
+    local stroke8 = Instance.new("UIStroke")
+    stroke8.Color = Color3.fromRGB(50, 50, 50)
+    stroke8.Thickness = 1
+    stroke8.Parent = cuffSuggestions
+    local function updateCuffSuggestions(cuffQuery)
+        for cuffChildIndex, cuffChild in ipairs(cuffSuggestions:GetChildren()) do
+            if cuffChild:IsA("TextButton") then
+                cuffChild:Destroy()
+            end
+        end
+        if cuffQuery == "" then
+            cuffSuggestions.Visible = false
+            cuffSuggestions.Size = UDim2.new(1, -12, 0, 0)
+            selectedCuffTarget = nil
+            return
+        end
+        local cuffMatches = {}
+        for cuffPlayerIndex, cuffMatchPlayer in ipairs(players:GetPlayers()) do
+            if cuffMatchPlayer ~= localPlayer then
+                if
+                    cuffMatchPlayer.Name:lower():find(cuffQuery:lower())
+                    or cuffMatchPlayer.DisplayName:lower():find(cuffQuery:lower())
+                then
+                    table.insert(cuffMatches, cuffMatchPlayer)
+                end
+            end
+        end
+        if #cuffMatches > 0 then
+            cuffSuggestions.Visible = true
+            local listHeight = math.min(#cuffMatches * 26, 85)
+            cuffSuggestions.Size = UDim2.new(1, -12, 0, listHeight)
+            cuffSuggestions.CanvasSize = UDim2.new(0, 0, 0, #cuffMatches * 26)
+            for cuffListIndex, cuffListPlayer in ipairs(cuffMatches) do
+                local cuffSuggestionButton = Instance.new("TextButton")
+                cuffSuggestionButton.Size = UDim2.new(1, 0, 0, 26)
+                cuffSuggestionButton.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+                cuffSuggestionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                cuffSuggestionButton.Text = "  " .. cuffListPlayer.Name .. " (" .. cuffListPlayer.DisplayName .. ")"
+                cuffSuggestionButton.TextSize = 11
+                cuffSuggestionButton.Font = Enum.Font.GothamBold
+                cuffSuggestionButton.TextXAlignment = Enum.TextXAlignment.Left
+                cuffSuggestionButton.ZIndex = 1006
+                cuffSuggestionButton.Parent = cuffSuggestions
+                cuffSuggestionButton.MouseButton1Click:Connect(function()
+                    selectedCuffTarget = cuffListPlayer
+                    cuffSearchBox.Text = cuffListPlayer.Name
+                    cuffSuggestions.Visible = false
+                end)
+            end
+        else
+            cuffSuggestions.Visible = false
+            cuffSuggestions.Size = UDim2.new(1, -12, 0, 0)
+        end
+    end
+    cuffSearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        selectedCuffTarget = nil
+        updateCuffSuggestions(cuffSearchBox.Text)
+        local typedName = cuffSearchBox.Text:lower()
+        for matchIndex, matchPlayer in ipairs(players:GetPlayers()) do
+            if
+                (string.lower(matchPlayer.Name) == typedName)
+                or (string.lower(matchPlayer.DisplayName or "") == typedName)
+            then
+                verifyOwnerName(matchPlayer.Name)
+            end
+        end
+    end)
+    local function findCuffTool()
+        local cuffCharacter = localPlayer.Character
+        if not cuffCharacter then
+            return nil
+        end
+        local backpack = localPlayer:FindFirstChildOfClass("Backpack")
+        local bestTool = nil
+        local bestScore = 0
+        local function scoreCuffTool(tool)
+            if not tool or not tool:IsA("Tool") then
+                return 0
+            end
+            local toolName = tostring(tool.Name or ""):lower()
+            local toolScore = 0
+            if
+                toolName:find("cuff", 1, true)
+                or toolName:find("handcuff", 1, true)
+                or toolName:find("arrest", 1, true)
+                or toolName:find("كلب", 1, true)
+            then
+                toolScore = toolScore + 4
+            end
+            for toolDescIndex, toolDescendant in ipairs(tool:GetDescendants()) do
+                if toolDescendant:IsA("RemoteEvent") or toolDescendant:IsA("RemoteFunction") then
+                    local remoteName = tostring(toolDescendant.Name or ""):lower()
+                    if
+                        remoteName:find("cuff", 1, true)
+                        or remoteName:find("arrest", 1, true)
+                        or remoteName:find("handcuff", 1, true)
+                    then
+                        toolScore = toolScore + 5
+                    else
+                        toolScore = toolScore + 1
+                    end
+                end
+            end
+            return toolScore
+        end
+        for equippedIndex, equippedTool in ipairs(cuffCharacter:GetChildren()) do
+            local equippedScore = scoreCuffTool(equippedTool)
+            if equippedScore > bestScore then
+                bestScore = equippedScore
+                bestTool = equippedTool
+            end
+        end
+        if not bestTool and backpack then
+            for backpackIndex, backpackTool in ipairs(backpack:GetChildren()) do
+                local backpackScore = scoreCuffTool(backpackTool)
+                if backpackScore > bestScore then
+                    bestScore = backpackScore
+                    bestTool = backpackTool
+                end
+            end
+        end
+        return bestTool
+    end
+    local function getCuffTarget()
+        if selectedCuffTarget and selectedCuffTarget.Parent then
+            return selectedCuffTarget
+        end
+        local targetQuery = cuffSearchBox.Text:lower():gsub("%s+", "")
+        if targetQuery ~= "" then
+            for nearIndex, nearCandidate in ipairs(players:GetPlayers()) do
+                if
+                    (nearCandidate ~= localPlayer)
+                    and (
+                        (nearCandidate.Name:lower() == targetQuery)
+                        or (nearCandidate.DisplayName:lower() == targetQuery)
+                    )
+                then
+                    return nearCandidate
+                end
+            end
+        end
+        local cuffLocalCharacter = localPlayer.Character
+        if not cuffLocalCharacter or not cuffLocalCharacter:FindFirstChild("HumanoidRootPart") then
+            return nil
+        end
+        local localOrigin = cuffLocalCharacter.HumanoidRootPart.Position
+        local nearestPlayer, nearestDistance = nil, 500
+        for nearestIndex, nearPlayer in ipairs(players:GetPlayers()) do
+            if
+                (nearPlayer ~= localPlayer)
+                and nearPlayer.Character
+                and nearPlayer.Character:FindFirstChild("HumanoidRootPart")
+            then
+                local candidateDistance = (localOrigin - nearPlayer.Character.HumanoidRootPart.Position).Magnitude
+                if candidateDistance < nearestDistance then
+                    nearestDistance = candidateDistance
+                    nearestPlayer = nearPlayer
+                end
+            end
+        end
+        return nearestPlayer
+    end
+    local function cuffPlayer(cuffTarget)
+        if not cuffTarget or not cuffTarget.Parent or not cuffTarget.Character then
+            return false
+        end
+        if not verifyOwnerName(cuffTarget.Name) then
+            return false
+        end
+        local localCharacter = localPlayer.Character
+        local localHumanoid = localCharacter and localCharacter:FindFirstChildOfClass("Humanoid")
+        local localRootPart = localCharacter and localCharacter:FindFirstChild("HumanoidRootPart")
+        if not localCharacter or not localHumanoid or not localRootPart then
+            return false
+        end
+        local cuffTool = findCuffTool()
+        if not cuffTool then
+            return false
+        end
+        if cuffTool.Parent == localPlayer.Backpack then
+            localHumanoid:EquipTool(cuffTool)
+            task.wait(0.02)
+        end
+        local nearestPart = nil
+        local partScore = 0
+        for cuffDescIndex, cuffDescendant in ipairs(cuffTool:GetDescendants()) do
+            if cuffDescendant:IsA("RemoteEvent") or cuffDescendant:IsA("RemoteFunction") then
+                local cuffDescName = tostring(cuffDescendant.Name or ""):lower()
+                local cuffDescCount = 1
+                if
+                    cuffDescName:find("cuff", 1, true)
+                    or cuffDescName:find("arrest", 1, true)
+                    or cuffDescName:find("handcuff", 1, true)
+                then
+                    cuffDescCount = 5
+                end
+                if cuffDescCount > partScore then
+                    nearestPart = cuffDescendant
+                    partScore = cuffDescCount
+                end
+            end
+        end
+        if not nearestPart then
+            return false
+        end
+        local cuffTargetRoot = cuffTarget.Character:FindFirstChild("HumanoidRootPart")
+        if not cuffTargetRoot then
+            return false
+        end
+        if nearestPart:IsA("RemoteEvent") then
+            nearestPart:FireServer("Cuff", cuffTargetRoot)
+            nearestPart:FireServer(cuffTargetRoot)
+            nearestPart:FireServer("Arrest", cuffTargetRoot)
+        else
+            pcall(function()
+                nearestPart:InvokeServer("Cuff", cuffTargetRoot)
+                nearestPart:InvokeServer(cuffTargetRoot)
+            end)
+        end
+        task.wait(0.05)
+        if nearestPart:IsA("RemoteEvent") then
+            nearestPart:FireServer("Uncuff", cuffTargetRoot)
+            nearestPart:FireServer("Release", cuffTargetRoot)
+            nearestPart:FireServer("Unarrest", cuffTargetRoot)
+            nearestPart:FireServer("Uncuff", cuffTarget)
+        else
+            pcall(function()
+                nearestPart:InvokeServer("Uncuff", cuffTargetRoot)
+                nearestPart:InvokeServer("Release", cuffTargetRoot)
+            end)
+        end
+        return true
+    end
+    local function createCuffButton(labelText, yOffset)
+        local cuffActionButtonTemplate = Instance.new("TextButton")
+        cuffActionButtonTemplate.Size = UDim2.new(1, -12, 0, 30)
+        cuffActionButtonTemplate.Position = UDim2.new(0, 6, 0, yOffset)
+        cuffActionButtonTemplate.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        cuffActionButtonTemplate.TextColor3 = Color3.fromRGB(255, 255, 255)
+        cuffActionButtonTemplate.Text = labelText
+        cuffActionButtonTemplate.TextSize = 12
+        cuffActionButtonTemplate.Font = Enum.Font.GothamBold
+        cuffActionButtonTemplate.ZIndex = 1003
+        cuffActionButtonTemplate.Parent = cuffPage
+        local stroke14 = Instance.new("UIStroke")
+        stroke14.Color = Color3.fromRGB(50, 50, 50)
+        stroke14.Thickness = 1
+        stroke14.Parent = cuffActionButtonTemplate
+        local corner22 = Instance.new("UICorner")
+        corner22.CornerRadius = UDim.new(0, 6)
+        corner22.Parent = cuffActionButtonTemplate
+        return cuffActionButtonTemplate
+    end
+    local cuffButton = createCuffButton("كلبشة", 96)
+    local cuffDelayBox = Instance.new("TextBox")
+    cuffDelayBox.Size = UDim2.new(0.35, -8, 0, 30)
+    cuffDelayBox.Position = UDim2.new(0, 6, 0, 134)
+    cuffDelayBox.PlaceholderText = "الثواني"
+    cuffDelayBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+    cuffDelayBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    cuffDelayBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
+    cuffDelayBox.Text = "1"
+    cuffDelayBox.TextSize = 11
+    cuffDelayBox.Font = Enum.Font.Gotham
+    cuffDelayBox.ZIndex = 1003
+    cuffDelayBox.Parent = cuffPage
+    local stroke9 = Instance.new("UIStroke")
+    stroke9.Color = Color3.fromRGB(50, 50, 50)
+    stroke9.Thickness = 1
+    stroke9.Parent = cuffDelayBox
+    local corner15 = Instance.new("UICorner")
+    corner15.CornerRadius = UDim.new(0, 6)
+    corner15.Parent = cuffDelayBox
+    local autoCuffButton = Instance.new("TextButton")
+    autoCuffButton.Size = UDim2.new(0.65, -10, 0, 30)
+    autoCuffButton.Position = UDim2.new(0.35, 4, 0, 134)
+    autoCuffButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    autoCuffButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    autoCuffButton.Text = "كلبشة تلقائية"
+    autoCuffButton.TextSize = 12
+    autoCuffButton.Font = Enum.Font.GothamBold
+    autoCuffButton.ZIndex = 1003
+    autoCuffButton.Parent = cuffPage
+    local stroke10 = Instance.new("UIStroke")
+    stroke10.Color = Color3.fromRGB(50, 50, 50)
+    stroke10.Thickness = 1
+    stroke10.Parent = autoCuffButton
+    local corner16 = Instance.new("UICorner")
+    corner16.CornerRadius = UDim.new(0, 6)
+    corner16.Parent = autoCuffButton
+    local cuffTeleportButton = createCuffButton("كلبشة تو", 172)
+    cuffButton.MouseButton1Click:Connect(function()
+        local clickedTarget = getCuffTarget()
+        if clickedTarget then
+            cuffPlayer(clickedTarget)
+        end
+    end)
+    local autoCuffEnabled = false
+    local autoCuffThread = nil
+    autoCuffButton.MouseButton1Click:Connect(function()
+        autoCuffEnabled = not autoCuffEnabled
+        if autoCuffEnabled then
+            autoCuffButton.Text = "إيقاف الكلبشة"
+            autoCuffButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            autoCuffThread = task.spawn(function()
+                while autoCuffEnabled do
+                    local autoCuffTarget = getCuffTarget()
+                    if autoCuffTarget and (autoCuffTarget ~= localPlayer) and autoCuffTarget.Parent then
+                        pcall(function()
+                            cuffPlayer(autoCuffTarget)
+                        end)
+                    end
+                    local autoCuffDelay = tonumber(cuffDelayBox.Text) or 1
+                    task.wait(autoCuffDelay)
+                end
+            end)
+        else
+            autoCuffEnabled = false
+            autoCuffButton.Text = "كلبشة تلقائية"
+            autoCuffButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            if autoCuffThread then
+                task.cancel(autoCuffThread)
+                autoCuffThread = nil
+            end
+        end
+    end)
+    cuffTeleportButton.MouseButton1Click:Connect(function()
+        local teleportTarget = getCuffTarget()
+        if
+            teleportTarget
+            and teleportTarget.Character
+            and teleportTarget.Character:FindFirstChild("HumanoidRootPart")
+        then
+            local teleportCharacter = localPlayer.Character
+            if teleportCharacter and teleportCharacter:FindFirstChild("HumanoidRootPart") then
+                local teleportTargetRoot = teleportTarget.Character.HumanoidRootPart
+                local returnCFrame = teleportCharacter.HumanoidRootPart.CFrame
+                teleportCharacter.HumanoidRootPart.CFrame = teleportTargetRoot.CFrame + Vector3.new(0, 0, 2)
+                task.wait(0.02)
+                cuffPlayer(teleportTarget)
+                task.wait(0.02)
+                teleportCharacter.HumanoidRootPart.CFrame = returnCFrame
+            end
+        end
+    end)
+end
+do
+    protectionsPageScroll:ClearAllChildren()
+    hangProtectPage = (Instance.new("Frame"))
+    hangProtectPage.Size = UDim2.new(1, -10, 0, 120)
+    hangProtectPage.Position = UDim2.new(0, 5, 0, 5)
+    hangProtectPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    hangProtectPage.BorderSizePixel = 0
+    hangProtectPage.LayoutOrder = 1
+    hangProtectPage.ZIndex = 1002
+    hangProtectPage.Parent = protectionsPageScroll
+    local corner17 = Instance.new("UICorner")
+    corner17.CornerRadius = UDim.new(0, 10)
+    corner17.Parent = hangProtectPage
+    local stroke11 = Instance.new("UIStroke")
+    stroke11.Thickness = 1
+    stroke11.Color = Color3.fromRGB(30, 30, 30)
+    stroke11.Parent = hangProtectPage
+end
+do
+    hangProtectButton = (Instance.new("TextButton"))
+    hangProtectButton.Size = UDim2.new(1, -20, 0, 60)
+    hangProtectButton.Position = UDim2.new(0, 10, 0, 10)
+    hangProtectButton.Text = "حماية تعليق"
+    hangProtectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    hangProtectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    hangProtectButton.TextSize = 16
+    hangProtectButton.Font = Enum.Font.GothamBold
+    hangProtectButton.Parent = hangProtectPage
+    local corner18 = Instance.new("UICorner")
+    corner18.CornerRadius = UDim.new(0, 8)
+    corner18.Parent = hangProtectButton
+end
+do
+    local hangProtectHint = Instance.new("TextLabel")
+    hangProtectHint.Size = UDim2.new(1, 0, 0, 20)
+    hangProtectHint.Position = UDim2.new(0, 0, 0, 80)
+    hangProtectHint.Text = "مرقاب"
+    hangProtectHint.BackgroundTransparency = 1
+    hangProtectHint.TextColor3 = Color3.fromRGB(180, 180, 180)
+    hangProtectHint.TextSize = 12
+    hangProtectHint.Font = Enum.Font.Gotham
+    hangProtectHint.Parent = hangProtectPage
+end
+do
+    local function getHumanoidRootPart(playerArg)
+        if not playerArg then
+            return nil
+        end
+        local rootPart = playerArg:FindFirstChild("HumanoidRootPart")
+        if rootPart then
+            return rootPart
+        else
+            local lookupParams = {
+                pcall(function()
+                    return playerArg:WaitForChild("HumanoidRootPart", 2)
+                end),
+            }
+            if lookupParams[1] then
+                return lookupParams[2]
+            else
+                return nil
+            end
+        end
+    end
+    local hangProtectEnabled = false
+    local hangAnchorPosition
+    hangProtectButton.MouseButton1Click:Connect(function()
+        hangProtectEnabled = not hangProtectEnabled
+        if hangProtectEnabled then
+            local hangRoot = getHumanoidRootPart(localPlayer.Character)
+            hangAnchorPosition = (hangRoot and hangRoot.Position) or nil
+            hangProtectButton.Text = "إيقاف حماية"
+            hangProtectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            hangProtectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        else
+            hangProtectButton.Text = "حماية تعليق"
+            hangProtectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            hangProtectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            hangAnchorPosition = nil
+        end
+    end)
+    localPlayer.CharacterAdded:Connect(function(addedCharacter)
+        local trackedRoot = getHumanoidRootPart(addedCharacter)
+        if hangProtectEnabled and trackedRoot then
+            hangAnchorPosition = hangAnchorPosition or trackedRoot.Position
+        end
+    end)
+    runService.Heartbeat:Connect(function()
+        if not hangProtectEnabled or not hangAnchorPosition then
+            return
+        end
+        local voidCharacter = localPlayer.Character
+        local voidRoot = getHumanoidRootPart(voidCharacter)
+        if not voidRoot then
+            return
+        end
+        pcall(function()
+            if (voidRoot.Position - hangAnchorPosition).Magnitude > 10000 then
+                voidRoot.CFrame = CFrame.new(hangAnchorPosition)
+                local voidHumanoid = voidCharacter:FindFirstChildOfClass("Humanoid")
+                if voidHumanoid then
+                    voidHumanoid.PlatformStand = true
+                    task.delay(2, function()
+                        if voidCharacter and voidCharacter.Parent and voidHumanoid then
+                            voidHumanoid.PlatformStand = false
+                        end
+                    end)
+                end
+            end
+        end)
+    end)
+
+    voidPageScroll:ClearAllChildren()
+    voidPage = Instance.new("Frame")
+end
+do
+    voidPage.Size = UDim2.new(1, -10, 0, 120)
+    voidPage.Position = UDim2.new(0, 5, 0, 5)
+    voidPage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    voidPage.BorderSizePixel = 0
+    voidPage.LayoutOrder = 1
+    voidPage.ZIndex = 1002
+    voidPage.Parent = voidPageScroll
+    local corner19 = Instance.new("UICorner")
+    corner19.CornerRadius = UDim.new(0, 10)
+    corner19.Parent = voidPage
+    local stroke12 = Instance.new("UIStroke")
+    stroke12.Thickness = 1
+    stroke12.Color = Color3.fromRGB(30, 30, 30)
+    stroke12.Parent = voidPage
+end
+do
+    local voidTitle = Instance.new("TextLabel")
+    voidTitle.Size = UDim2.new(1, -10, 0, 20)
+    voidTitle.Position = UDim2.new(0, 5, 0, 4)
+    voidTitle.BackgroundTransparency = 1
+    voidTitle.Text = "Void Teleport"
+    voidTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    voidTitle.Font = Enum.Font.GothamBold
+    voidTitle.TextSize = 16
+    voidTitle.TextXAlignment = Enum.TextXAlignment.Left
+    voidTitle.Parent = voidPage
+    local voidStatusLabel = Instance.new("TextLabel")
+    voidStatusLabel.Size = UDim2.new(0, 40, 0, 16)
+    voidStatusLabel.Position = UDim2.new(1, -45, 0, 4)
+    voidStatusLabel.BackgroundTransparency = 1
+    voidStatusLabel.Text = "OFF"
+    voidStatusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+    voidStatusLabel.Font = Enum.Font.GothamBold
+    voidStatusLabel.TextSize = 14
+    voidStatusLabel.Parent = voidPage
+    local voidButton = Instance.new("TextButton")
+    voidButton.Size = UDim2.new(1, -10, 0, 32)
+    voidButton.Position = UDim2.new(0, 5, 0, 30)
+    voidButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    voidButton.BorderSizePixel = 0
+    voidButton.Text = "Activate"
+    voidButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    voidButton.Font = Enum.Font.GothamBold
+    voidButton.TextSize = 14
+    voidButton.Parent = voidPage
+    local corner20 = Instance.new("UICorner")
+    corner20.CornerRadius = UDim.new(0, 6)
+    corner20.Parent = voidButton
+    local voidActive = false
+    local function setVoidStatus(statusOn)
+        if statusOn then
+            voidStatusLabel.Text = "ON"
+            voidStatusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+        else
+            voidStatusLabel.Text = "OFF"
+            voidStatusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+        end
+    end
+    local voidReturnCFrame
+    voidButton.MouseButton1Click:Connect(function()
+        local currentCharacter = localPlayer.Character
+        local respawnedCharacter = currentCharacter or localPlayer.CharacterAdded:Wait()
+        local teleportRoot = respawnedCharacter and respawnedCharacter:FindFirstChild("HumanoidRootPart")
+        if not teleportRoot or voidActive then
+            return
+        end
+        voidReturnCFrame = teleportRoot.CFrame
+        local teleportResult = {
+            pcall(function()
+                teleportRoot.CFrame = CFrame.new(9999999999, 999999, teleportRoot.Position.Z)
+            end),
+        }
+        if not teleportResult[1] then
+            warn("Teleport failed:", teleportResult[2])
+            return
+        else
+            voidActive = true
+            setVoidStatus(true)
+            voidButton.Text = "Returning in 3s"
+            voidButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            voidButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            task.spawn(function()
+                task.wait(3)
+                local returnCharacter = localPlayer.Character
+                if returnCharacter and returnCharacter:FindFirstChild("HumanoidRootPart") and voidReturnCFrame then
+                    pcall(function()
+                        returnCharacter.HumanoidRootPart.CFrame = voidReturnCFrame
+                    end)
+                end
+                voidActive = false
+                setVoidStatus(false)
+                voidButton.Text = "Activate"
+                voidButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                voidButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                voidReturnCFrame = nil
+            end)
+        end
+    end)
+end
+print("تم تطبيق الحماية الشاملة على الاستهداف والكلبشة بنجاح!")
